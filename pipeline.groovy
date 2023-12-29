@@ -23,6 +23,8 @@ pipeline {
                     ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform apply tfplan '
                     ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -json private_ips | jq -r '.[]''
                     '''
+                    instance()
+                    sh "echo pavan | sudo -S scp -i /var/lib/jenkins/.ssh/nextgen-devops-team.pem -r ubuntu@10.63.20.41:/home/ubuntu/myinventory /var/lib/jenkins/workspace/intel_icelake"
                    }
                     else{
                       sh "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform destroy --auto-approve '"
