@@ -1,6 +1,6 @@
 ---
 - name: Backup DB
-  hosts: localhost
+  hosts: postgres
   become: true
   tasks:
     - name: source .bash_profile
