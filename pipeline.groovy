@@ -24,7 +24,7 @@ pipeline {
                     '''
                    }
                     else{
-                      sh 'terraform destroy'
+                      sh 'terraform destroy --auto-approve'
                     }
                   }
                 instance()
