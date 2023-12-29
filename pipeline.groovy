@@ -76,12 +76,12 @@ def instance() {
     sh "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && rm -rf myinventory 2> /dev/null && touch myinventory'"
     
     // Master node
-    sh -c "ssh ubuntu@10.63.20.41 'cd /home/ubuntu/intel_icelake && echo \"[postgres]\" >> myinventory'"
+    sh "ssh ubuntu@10.63.20.41 'cd /home/ubuntu/intel_icelake && echo \"[postgres]\" >> myinventory'"
     sh "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && echo -n ' ansible_host='  >> myinventory'"
     sh "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -no-color -json instance_private_ip | tr -d '[]\"' | tr ',' '\n' | head -1 | sed 's/\$/ ansible_user=ubuntu/' >> myinventory"
     def postgres_ip = sh(script:"ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -no-color -json instance_private_ip | tr -d '[]\"' | tr ',' '\n' | head -1 | sed 's/\$/ ansible_user=ubuntu/''")
     // Worker nodes with ansible_user=ubuntu
-    sh -c "ssh ubuntu@10.63.20.41 'cd /home/ubuntu/intel_icelake && echo \"[hammer]\" >> myinventory'"
+    sh "ssh ubuntu@10.63.20.41 'cd /home/ubuntu/intel_icelake && echo \"[hammer]\" >> myinventory'"
     sh "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -no-color -json instance_private_ip | tr -d '[]\"' | tr ',' '\n' | tail -n +2 | sed 's/\$/ ansible_user=ubuntu/' >> myinventory"
     def hammer_ip = sh(script:"ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -no-color -json instance_private_ip | tr -d '[]\"' | tr ',' '\n' | tail -n +2 | sed 's/\$/ ansible_user=ubuntu/''")
     def workerIDs = sh(script: "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -json instance_IDs'", returnStdout: true).trim()
