@@ -12,22 +12,24 @@ pipeline {
         stage('Build infra'){
             steps{
                 sh '''
-                terraform init
-                terraform validate
-                terraform plan -out=tfplan
+                scp -r intel_icelake ubuntu@10.63.20.41:/home/ubuntu
+                ssh ubuntu@10.63.20.41 -- 'terraform init'
+                ssh ubuntu@10.63.20.41 -- 'terraform validate'
+                ssh ubuntu@10.63.20.41 -- 'terraform plan -out=tfplan'
                 '''
                 script{
                   if(params.action == 'apply'){
                     sh '''
-                    terraform apply tfplan
-                    terraform output -json private_ips | jq -r '.[]'
+                    ssh ubuntu@10.63.20.41 -- 'terraform apply tfplan'
+                    ssh ubuntu@10.63.20.41 -- 'terraform output -json private_ips | jq -r '.[]''
                     '''
                    }
                     else{
-                      sh 'terraform destroy --auto-approve'
+                      sh "ssh ubuntu@10.63.20.41 -- 'terraform destroy --auto-approve'"
                     }
                   }
                 instance()
+                sh "scp -r ubuntu@10.63.20.41:/home/ubuntu/myinventory /var/lib/jenkins/workspace/intel_icelake"
             }
         }
 
