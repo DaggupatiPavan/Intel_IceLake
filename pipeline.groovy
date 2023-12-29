@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    parameters{
+        choice(name: 'action',choices: 'apply\ndestroy',description: 'Choose the action you want')
+    }
     stages {
         stage('Clone') {
             steps {
@@ -12,9 +15,18 @@ pipeline {
                 terraform init
                 terraform validate
                 terraform plan -out=tfplan
-                terraform apply tfplan
-                terraform output -json private_ips | jq -r '.[]'
                 '''
+                script{
+                  if(params.action == 'apply'){
+                    sh '''
+                    terraform apply tfplan
+                    terraform output -json private_ips | jq -r '.[]'
+                    '''
+                   }
+                    else{
+                      sh 'terraform destroy'
+                    }
+                  }
                 instance()
             }
         }
