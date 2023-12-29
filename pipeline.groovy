@@ -74,10 +74,11 @@ def instance() {
     
     // Master node
     sh '''
-        ssh ubuntu@10.63.20.41 'cd /home/ubuntu/intel_icelake && echo \"[postgres]\" >> myinventory'
-        ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && echo -n ansible_host= >> myinventory'
-        ssh ubuntu@10.63.20.41 -- "cd /home/ubuntu/intel_icelake && terraform output -no-color -json instance_private_ip | tr -d '[]\"' | tr ',' '\n' | head -1 | sed 's/\$/ ansible_user=ubuntu/' >> myinventory"
-       '''
+            ssh ubuntu@10.63.20.41 'cd /home/ubuntu/intel_icelake && echo "[postgres]" >> myinventory'
+            ssh ubuntu@10.63.20.41 'cd /home/ubuntu/intel_icelake && echo -n ansible_host= >> myinventory'
+            ssh ubuntu@10.63.20.41 'cd /home/ubuntu/intel_icelake && terraform output -no-color -json instance_private_ip | tr -d '[]\"' | tr ',' '\\n' | head -1 | sed 's/\\$/ ansible_user=ubuntu/' >> myinventory'
+        '''
+
     def postgres_ip = sh(script:"ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -no-color -json instance_private_ip | tr -d '[]\"' | tr ',' '\n' | head -1 | sed 's/\$/ ansible_user=ubuntu/''")
     // Worker nodes with ansible_user=ubuntu
     sh '''
