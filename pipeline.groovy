@@ -11,28 +11,23 @@ pipeline {
         }
         stage('Build infra'){
             steps{
-                sh '''
-                echo pavan | sudo -S rsync -e "ssh -i /var/lib/jenkins/.ssh/nextgen-devops-team.pem" -av --exclude=".git" ../intel_icelake ubuntu@10.63.20.41:/home/ubuntu
-                ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform init'
-                ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform validate'
-                ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform plan -out=tfplan'
-                '''
                 script{
+                  if(params.action == 'destroy'){
+                    sh "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform destroy --auto-approve '"
+                  }
                   if(params.action == 'apply'){
                     sh '''
+                    echo pavan | sudo -S rsync -e "ssh -i /var/lib/jenkins/.ssh/nextgen-devops-team.pem" -av --exclude=".git" ../intel_icelake ubuntu@10.63.20.41:/home/ubuntu
+                    ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform init'
+                    ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform validate'
+                    ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform plan -out=tfplan'
                     ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform apply tfplan '
                     ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -json private_ips | jq -r '.[]''
                     '''
                     instance()
                     sh "echo pavan | sudo -S scp -i /var/lib/jenkins/.ssh/nextgen-devops-team.pem -r ubuntu@10.63.20.41:/home/ubuntu/myinventory /var/lib/jenkins/workspace/intel_icelake"
-                   }
-                    else{
-                      sh "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform destroy --auto-approve '"
                     }
-                  }
-                instance()
-                sh "echo pavan | sudo -S scp -i /var/lib/jenkins/.ssh/nextgen-devops-team.pem -r ubuntu@10.63.20.41:/home/ubuntu/myinventory /var/lib/jenkins/workspace/intel_icelake"
-
+                }
             }
         }
 
