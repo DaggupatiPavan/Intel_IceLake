@@ -1,7 +1,10 @@
 ---
 - name: Postgres DB Config
-  hosts: localhost
+  hosts: postgres
   become: true
+  vars:
+    postgres_ip
+    hammer_ip
   tasks:
     - name: Create directory
       file:
@@ -69,14 +72,14 @@
 
     - name: Edit pg_hba.conf file in $PGDATA
       lineinfile:
-        line: "host    all             all             10.63.20.47/32            trust"
+        line: "host    all             all             {{ hammer_ip }}/32            trust"
         dest: /var/lib/postgresql/14/main/pg_hba.conf
         insertafter: host    all             all             127.0.0.1/32            trust
 
     - name: Edit postgres.conf
       lineinfile:
         line: |
-          listen_addresses= '10.63.20.124'
+          listen_addresses= '{{ postgres_ip }}'
            port = 5432 
         dest: /var/lib/postgresql/14/main/postgresql.conf
         insertafter: '#port = 5432                            # (change requires restart)'
