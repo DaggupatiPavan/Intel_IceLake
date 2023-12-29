@@ -1,14 +1,16 @@
 ---
 - name: Config HammerDB
-  hosts: localhost
+  hosts: hammer
   become: true
+  vars:
+    postgres_ip
   tasks:
     - name: Write file contents
       copy:
         content: |
             dbset db pg
             dbset bm tpc-c
-            diset connection pg_host 10.63.20.124
+            diset connection pg_host {{ postgres_ip }}
             diset tpcc pg_count_ware 20
             diset tpcc pg_superuserpass admin
             diset tpcc pg_total_iterations 10000000
