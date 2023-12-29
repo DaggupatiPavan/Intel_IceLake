@@ -13,19 +13,19 @@ pipeline {
             steps{
                 sh '''
                 echo pavan | sudo -S rsync -e "ssh -i /var/lib/jenkins/.ssh/nextgen-devops-team.pem" -av --exclude=".git" ../intel_icelake ubuntu@10.63.20.41:/home/ubuntu
-                ssh ubuntu@10.63.20.41 -- 'terraform init /home/ubuntu/intel_icelake'
-                ssh ubuntu@10.63.20.41 -- 'terraform validate /home/ubuntu/intel_icelake'
-                ssh ubuntu@10.63.20.41 -- 'terraform plan -out=tfplan /home/ubuntu/intel_icelake'
+                ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform init'
+                ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform validate'
+                ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform plan -out=tfplan'
                 '''
                 script{
                   if(params.action == 'apply'){
                     sh '''
-                    ssh ubuntu@10.63.20.41 -- 'terraform apply tfplan /home/ubuntu/intel_icelake'
-                    ssh ubuntu@10.63.20.41 -- 'terraform output -json private_ips | jq -r '.[]' /home/ubuntu/intel_icelake'
+                    ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform apply tfplan '
+                    ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -json private_ips | jq -r '.[]''
                     '''
                    }
                     else{
-                      sh "ssh ubuntu@10.63.20.41 -- 'terraform destroy --auto-approve /home/ubuntu/intel_icelake'"
+                      sh "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform destroy --auto-approve '"
                     }
                   }
                 instance()
