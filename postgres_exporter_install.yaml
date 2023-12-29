@@ -2,6 +2,8 @@
 - name: Install Postgres Exporter
   hosts: postgres, hammer
   become: true
+  vars:
+    postgres_ip
   tasks:
     - name: Create directory postgres_exporter
       file:
