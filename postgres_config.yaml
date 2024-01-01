@@ -61,14 +61,14 @@
         dest: /etc/sysctl.conf
         insertafter: EOF
 
-    # - name: Reboot machine
-    #   shell: reboot
-    #   async: 0
-    #   poll: 0
+    - name: Reboot machine
+      shell: reboot
+      async: 0
+      poll: 0
 
-    # - name: Wait for host to reboot
-    #   wait_for_connection:
-    #     timeout: 300
+    - name: Wait for host to reboot
+      wait_for_connection:
+        timeout: 300
 
     - name: Edit pg_hba.conf file in $PGDATA
       lineinfile:
