@@ -1,9 +1,11 @@
 pipeline {
     agent any
-    def postgres_ip
-    def hammer_ip
     parameters {
         choice(name: 'action', choices: 'apply\ndestroy', description: 'Choose the action you want')
+    }
+    environment {
+        postgres_ip = null
+        hammer_ip = null
     }
     stages {
         stage('Clone') {
