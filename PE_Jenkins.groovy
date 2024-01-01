@@ -49,8 +49,8 @@ pipeline {
         stage('Install ansible') {
             steps {
                 script {
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${postgres_ip} -- 'sudo apt install ansible'"
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${hammer_ip} -- 'sudo apt install ansible'"
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${postgres_ip} -- 'sudo apt update && sudo apt install ansible -y'"
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${hammer_ip} -- 'sudo apt update && sudo apt install ansible -y'"
 
                 }
             }
