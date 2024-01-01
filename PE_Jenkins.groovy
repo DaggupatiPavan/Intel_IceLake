@@ -27,11 +27,11 @@ pipeline {
                             terraform apply tfplan -no-color
                             terraform output -json private_ips | jq -r '.[]'
                         '''
-                        postgres_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | head -1", returnStdout: true).trim()
-                        hammer_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | tail -1", returnStdout: true).trim()
+                        environment.postgres_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | head -1", returnStdout: true).trim()
+                        environment.hammer_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | tail -1", returnStdout: true).trim()
                         sh '''
-                        echo "Postgres IP: ${postgres_ip}"
-                        echo "Hammer IP: ${hammer_ip}"
+                        echo "Postgres IP: ${environment.postgres_ip}"
+                        echo "Hammer IP: ${environment.hammer_ip}"
                         '''
                     }
                 }
@@ -50,8 +50,8 @@ pipeline {
         stage('Install ansible') {
             steps {
                 script {
-                    sh "ssh ubuntu@${postgres_ip} -- 'sudo apt install ansible'"
-                    sh "ssh ubuntu@${hammer_ip} -- 'sudo apt install ansible'"
+                    sh "ssh ubuntu@${environment.postgres_ip} -- 'sudo apt install ansible'"
+                    sh "ssh ubuntu@${environment.hammer_ip} -- 'sudo apt install ansible'"
                 }
             }
         }
@@ -63,7 +63,7 @@ pipeline {
                         ansible-playbook -i myinventory postgres_install.yaml
                         ansible-playbook -i myinventory hammerdb_install.yaml
                         ansible-playbook -i myinventory prometheus_install.yaml
-                        ansible-playbook -i myinventory postgres_exporter_install.yaml -e postgres_ip=${postgres_ip}
+                        ansible-playbook -i myinventory postgres_exporter_install.yaml -e postgres_ip=${environment.postgres_ip}
                         ansible-playbook -i myinventory grafana_install.yaml
                     """
                 }
@@ -73,10 +73,10 @@ pipeline {
             steps {
                 script {
                     sh """
-                        ansible-playbook -i myinventory postgres_config.yaml -e postgres_ip=${postgres_ip}, hammer_ip=${hammer_ip}
-                        ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
+                        ansible-playbook -i myinventory postgres_config.yaml -e postgres_ip=${environment.postgres_ip}, hammer_ip=${environment.hammer_ip}
+                        ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${environment.postgres_ip}
                         ansible-playbook -i myinventory postgres_backup.yaml 
-                        ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
+                        ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${environment.postgres_ip}
                         ansible-playbook -i myinventory restore_db.yaml 
                     """
                 }
