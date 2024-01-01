@@ -67,7 +67,7 @@
       poll: 0
 
     - name: Wait for host to reboot
-    dedicate_to: localhost
+      dedicate_to: localhost
       wait_for_connection:
         timeout: 300
 
