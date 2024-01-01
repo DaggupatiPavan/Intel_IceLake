@@ -3,7 +3,7 @@
   hosts: hammer
   become: true
   vars:
-    postgres_ip
+    postgres_ip: "{{ postgres_ip }}"
   tasks:
     - name: Write file contents
       copy:
