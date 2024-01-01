@@ -7,11 +7,11 @@ TF_STATE_FILE="terraform.tfstate"
 IP_ADDRESSES=($(terraform output -json private_ips | jq -r '.[]'))
 
 # Create or truncate the Ansible inventory file
-> inventory
+> myinventory
 
 # Write IP addresses with specific hostnames and "ubuntu@" prefix to the Ansible inventory file
-echo "postgres ansible_ssh_host=ubuntu@${IP_ADDRESSES[0]}" >> inventory
-echo "hammer ansible_ssh_host=ubuntu@${IP_ADDRESSES[1]}" >> inventory
+echo "postgres ansible_ssh_host=ubuntu@${IP_ADDRESSES[0]}" >> myinventory
+echo "hammer ansible_ssh_host=ubuntu@${IP_ADDRESSES[1]}" >> myinventory
 
 # Print the Ansible inventory file content
-cat inventory
+cat myinventory
