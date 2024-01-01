@@ -79,6 +79,11 @@
         dest: /var/lib/postgresql/14/main/postgresql.conf
         insertafter: '#port = 5432                            # (change requires restart)'
 
+    - name: Stop PostgreSQL if already running
+      become: true
+      shell: "sudo kill $(cat /var/lib/postgresql/14/main/postmaster.pid)"
+      ignore_errors: true
+
     - name: Start DB
       command:
         cmd: 'su - postgres -c "pg_ctl -D $PGDATA start"'
