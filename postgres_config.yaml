@@ -62,11 +62,12 @@
         insertafter: EOF
 
     - name: Reboot machine
-  reboot:
+      reboot:
+        reboot_timeout: 600
 
-- name: Wait before proceeding
-  pause:
-    seconds: 120
+    - name: Wait before proceeding
+      pause:
+        seconds: 120
 
     - name: Edit pg_hba.conf file in $PGDATA
       lineinfile:
