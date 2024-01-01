@@ -25,8 +25,8 @@ data "aws_vpc" "existing_vpc" {
 #   }
 # }
 
-resource "aws_security_group" "myvpc1-sg" {
-  name="myvpc1-sg"
+resource "aws_security_group" "myvpc2-sg" {
+  name="myvpc2-sg"
 
   vpc_id=data.aws_vpc.existing_vpc.id
 
