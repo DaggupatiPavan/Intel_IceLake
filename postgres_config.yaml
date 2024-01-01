@@ -3,8 +3,8 @@
   hosts: postgres
   become: true
   vars:
-    postgres_ip
-    hammer_ip
+    postgres_ip: "{{ postgres_ip }}"
+    hammer_ip: "{{ hammer_ip }}"
   tasks:
     - name: Create directory
       file:
