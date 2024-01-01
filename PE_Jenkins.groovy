@@ -23,6 +23,7 @@ pipeline {
                             terraform apply tfplan -no-color
                             terraform output -json private_ips | jq -r '.[]'
                         '''
+                        waitStatus()
                         postgres_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | head -1", returnStdout: true).trim()
                         hammer_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | tail -1", returnStdout: true).trim()
                         sh '''
@@ -42,6 +43,8 @@ pipeline {
                 }
             }
         }
+
+        
 
         stage('Install ansible') {
             steps {
@@ -80,4 +83,22 @@ pipeline {
             }
         }
     }
+}
+
+def waitStatus(){
+  def instanceIds = sh(returnStdout: true, script: "terraform output -json instance_IDs | tr -d '[]\"' | tr ',' ' '").trim().split(' ')
+  for (int i = 0; i < instanceIds.size(); i++) {
+    def instanceId = instanceIds[i]
+    while (true) {
+      def status = sh(returnStdout: true, script: "aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[].Instances[].State.Name' --output text").trim()
+      if (status != 'running') {
+        print '.'
+      } else {
+        println "Instance ${instanceId} is ${status}"
+        sleep 10
+        break  
+      }
+      sleep 5
+    }
+  }
 }
