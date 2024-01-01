@@ -24,12 +24,15 @@ pipeline {
                        terraform apply tfplan -no-color
                        terraform output -json private_ips | jq -r '.[]'
                     '''
-                    instance()
-                    
                     }
                 }
             }
         }
+
+        stage('Generate Inventory file'){
+            steps{
+                script{
+                    sh ./inventoryfile.sh
 
         stage('Install ansible'){
             steps{
