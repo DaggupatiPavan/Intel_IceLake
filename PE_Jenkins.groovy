@@ -1,5 +1,7 @@
 pipeline {
     agent any
+    def postgres_ip
+    def hammer_ip
     parameters {
         choice(name: 'action', choices: 'apply\ndestroy', description: 'Choose the action you want')
     }
@@ -23,8 +25,8 @@ pipeline {
                             terraform apply tfplan -no-color
                             terraform output -json private_ips | jq -r '.[]'
                         '''
-                        def postgres_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | head -1")
-                        def hammer_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | tail -1")
+                        postgres_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | head -1")
+                        hammer_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | tail -1")
                     }
                 }
             }
