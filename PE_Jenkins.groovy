@@ -49,9 +49,12 @@ pipeline {
         stage('Install ansible') {
             steps {
                 script {
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${postgres_ip} -- 'sudo apt update && sudo apt install ansible -y'"
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${hammer_ip} -- 'sudo apt update && sudo apt install ansible -y'"
-
+                    sh '''
+                     sudo ssh-keygen -f "/var/lib/jenkins/.ssh/known_hosts" -R "{postgres_ip}
+                     sudo ssh-keygen -f "/var/lib/jenkins/.ssh/known_hosts" -R "{hammer_ip}
+                     ssh -o StrictHostKeyChecking=no ubuntu@${postgres_ip} -- 'sudo apt update && sudo apt install ansible -y'
+                     ssh -o StrictHostKeyChecking=no ubuntu@${hammer_ip} -- 'sudo apt update && sudo apt install ansible -y'
+                     '''
                 }
             }
         }
