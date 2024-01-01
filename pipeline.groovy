@@ -87,7 +87,7 @@ def instance() {
 
     //     '''
 
-    def postgres_ip = sh(script: "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && cat output.json | tr -d \"[]\"' | tr ',' '\\n' | head -1 | sed 's/\\$/ ansible_user=ubuntu/'")
+    // def postgres_ip = sh(script: "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && cat output.json | tr -d \"[]\"' | tr ',' '\\n' | head -1 | sed 's/\\$/ ansible_user=ubuntu/'")
 
     // Worker nodes with ansible_user=ubuntu
     // sh '''
@@ -102,8 +102,8 @@ def instance() {
     //         sed """s/\\$/ ansible_user=ubuntu/""" >> myinventory'
     //     '''
 
-    def hammer_ip = sh(script: "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && cat output.json | tr -d \"[]\"' | tr ',' '\\n' | tail -n +2 | sed 's/\\$/ ansible_user=ubuntu/'")
-    def workerIDs = sh(script: "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -json instance_IDs'", returnStdout: true).trim()
+    // def hammer_ip = sh(script: "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && cat output.json | tr -d \"[]\"' | tr ',' '\\n' | tail -n +2 | sed 's/\\$/ ansible_user=ubuntu/'")
+    // def workerIDs = sh(script: "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && terraform output -json instance_IDs'", returnStdout: true).trim()
     
     // Copy the inventory file to the remote server
     sh "ssh ubuntu@10.63.20.41 -- 'cd /home/ubuntu/intel_icelake && echo ${workerIDs} >> clusterDetails'"
