@@ -73,32 +73,32 @@ def instance() {
     sh "rm -rf myinventory 2> /dev/null && touch myinventory"
     
     // Master node
-    sh '''
-           echo "[postgres]" >> myinventory
-           echo -n "ansible_host=" >> myinventory
-            terraform output --no-color -json instance_private_ip > output.json &&
-            cat output.json |
-            tr -d '[]"' |
-            tr ',' '\\n' |
-            head -1 |
-            sed """s/\\$/ ansible_user=ubuntu/""" >> myinventory
+    // sh '''
+    //        echo "[postgres]" >> myinventory
+    //        echo -n "ansible_host=" >> myinventory
+    //         terraform output --no-color -json instance_private_ip > output.json &&
+    //         cat output.json |
+    //         tr -d '[]"' |
+    //         tr ',' '\\n' |
+    //         head -1 |
+    //         sed """s/\\$/ ansible_user=ubuntu/""" >> myinventory
 
-        '''
+    //     '''
 
-    def postgres_ip = sh(script: "cat output.json | tr -d \"[]\"' | tr ',' '\\n' | head -1 | sed 's/\\$/ ansible_user=ubuntu/")
+    // def postgres_ip = sh(script: "cat output.json | tr -d \"[]\"' | tr ',' '\\n' | head -1 | sed 's/\\$/ ansible_user=ubuntu/")
 
     // Worker nodes with ansible_user=ubuntu
-    sh '''
-            echo "[hammer]" >> myinventory
+    // sh '''
+    //         echo "[hammer]" >> myinventory
         
-            terraform output -no-color -json instance_private_ip > output.json &&
-            cat output.json |
-            tr -d '[]"' |
-            tr ',' '\\n' |
-            tail -n +2 |
-            sed """s/\\$/ ansible_user=ubuntu/""" >> myinventory
-        '''
+    //         terraform output -no-color -json instance_private_ip > output.json &&
+    //         cat output.json |
+    //         tr -d '[]"' |
+    //         tr ',' '\\n' |
+    //         tail -n +2 |
+    //         sed """s/\\$/ ansible_user=ubuntu/""" >> myinventory
+    //     '''
 
-    def hammer_ip = sh(script: "   cat output.json | tr -d \"[]\"' | tr ',' '\\n' | tail -n +2 | sed 's/\\$/ ansible_user=ubuntu/")
+    // def hammer_ip = sh(script: "   cat output.json | tr -d \"[]\"' | tr ',' '\\n' | tail -n +2 | sed 's/\\$/ ansible_user=ubuntu/")
    
 }
