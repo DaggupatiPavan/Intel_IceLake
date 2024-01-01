@@ -33,6 +33,9 @@ pipeline {
             steps{
                 script{
                     sh ./inventoryfile.sh
+                }
+            }
+        }
 
         stage('Install ansible'){
             steps{
@@ -42,6 +45,7 @@ pipeline {
                 }
             }
         }
+
         stage('Install Tools'){
             steps{
                 script{
