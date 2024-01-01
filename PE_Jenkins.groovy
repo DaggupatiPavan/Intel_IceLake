@@ -51,8 +51,8 @@ pipeline {
                 script {
                     sh "sudo ssh-keygen -f /var/lib/jenkins/.ssh/known_hosts -R ${postgres_ip}"
                     sh "sudo ssh-keygen -f /var/lib/jenkins/.ssh/known_hosts -R ${hammer_ip}"
-                    sh "ssh-keyscan ${postgres_ip} >> /var/lib/jenkins/.ssh/known_hosts"
-                    sh "ssh-keyscan ${hammer_ip} >> /var/lib/jenkins/.ssh/known_hosts"
+                    sh "sudo ssh-keyscan ${postgres_ip} >> /var/lib/jenkins/.ssh/known_hosts"
+                    sh "sudo ssh-keyscan ${hammer_ip} >> /var/lib/jenkins/.ssh/known_hosts"
                     sh "ssh -o StrictHostKeyChecking=yes ubuntu@${postgres_ip} -- 'sudo apt update && sudo apt install ansible -y'"
                     sh "ssh -o StrictHostKeyChecking=yes ubuntu@${hammer_ip} -- 'sudo apt update && sudo apt install ansible -y'"
                 }
