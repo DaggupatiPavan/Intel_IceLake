@@ -67,8 +67,9 @@
       poll: 0
 
     - name: Wait for host to reboot
-      dedicate_to: localhost
-      wait_for_connection:
+      local_action: wait_for_connection
+      vars:
+        delay: 5
         timeout: 300
 
     - name: Edit pg_hba.conf file in $PGDATA
