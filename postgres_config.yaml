@@ -62,15 +62,11 @@
         insertafter: EOF
 
     - name: Reboot machine
-      shell: reboot
-      async: 0
-      poll: 0
+  reboot:
 
-    - name: Wait for host to reboot
-      local_action: wait_for_connection
-      vars:
-        delay: 5
-        timeout: 300
+- name: Wait before proceeding
+  pause:
+    seconds: 120
 
     - name: Edit pg_hba.conf file in $PGDATA
       lineinfile:
