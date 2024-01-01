@@ -21,7 +21,7 @@ pipeline {
                        terraform init
                        terraform validate
                        terraform plan -out=tfplan
-                       terraform apply tfplan --no-color
+                       terraform apply tfplan -no-color
                        terraform output -json private_ips | jq -r '.[]'
                     '''
                     instance()
