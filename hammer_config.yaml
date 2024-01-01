@@ -25,7 +25,6 @@
             diset tpcc pg_num_vu 2
             diset tpcc pg_superuserpass admin
             buildschema
-            vudestroy
         dest: HammerDB-4.1/hammerdb_arguments.tcl
 
     - name: Run test commands
@@ -33,7 +32,27 @@
         cmd: ./hammerdbcli auto hammerdb_arguments.tcl
         chdir: HammerDB-4.1
       register: test_op
+      loop_control:
+        pause: 1
+      until: "30 | int - command_output.results[-1].ansible_loop_var"
+      retries: 30
 
     - name: Display test_op
       debug:
         var: test_op
+
+     - name: Write destroy content 
+      copy:
+        content: vudestroy
+        dest: HammerDB-4.1/hammerdb_arguments_destroy.tcl
+
+    - name: Run destroy
+      shell:
+        cmd: ./hammerdbcli auto hammerdb_arguments_destroy.tcl
+        chdir: HammerDB-4.1
+      register: destroy_op
+
+    - name: Display destroy op
+      debug:
+        var: destroy_op
+
