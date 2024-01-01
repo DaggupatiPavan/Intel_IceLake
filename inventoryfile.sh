@@ -4,7 +4,7 @@
 TF_STATE_FILE="terraform.tfstate"
 
 # Extract IP addresses from the Terraform output
-IP_ADDRESSES=($(terraform output -json instance_ips | jq -r '.value[]'))
+IP_ADDRESSES=($(terraform output -json private_ips | jq -r '.value[]'))
 
 # Create or truncate the Ansible inventory file
 > inventory
