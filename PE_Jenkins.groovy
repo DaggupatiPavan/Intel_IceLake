@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    parameters {
-        choice(name: 'action', choices: 'apply\ndestroy', description: 'Choose the action you want')
-    }
     stages {
         stage('Clone') {
             steps {
@@ -12,10 +9,6 @@ pipeline {
         stage('Build infra') {
             steps {
                 script {
-                    if (params.action == 'destroy') {
-                        sh "terraform destroy --auto-approve "
-                    }
-                    if (params.action == 'apply') {
                         sh '''
                             terraform init
                             terraform validate
@@ -32,7 +25,6 @@ pipeline {
                         '''
                     }
                 }
-            }
         }
 
         stage('Generate Inventory file') {
@@ -84,6 +76,11 @@ pipeline {
                     """
                 }
             }
+        }
+    }
+    post{
+        always{
+            sh "terraform destroy --auto-approve "
         }
     }
 }
