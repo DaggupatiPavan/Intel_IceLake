@@ -6,27 +6,24 @@
     postgres_ip: "{{ postgres_ip }}"
   tasks:
     - name: Unset LD_LIBRARY_PATH
-      shell: 
+      shell:
         cmd: unset LD_LIBRARY_PATH
         chdir: HammerDB-4.1
-
     - name: Export LD_LIBRARY_PATH
-      shell: 
+      shell:
         cmd: export LD_LIBRARY_PATH=/usr/lib/postgresql/14/lib
         chdir: HammerDB-4.1
-
     - name: Write file contents
       copy:
         content: |
-            dbset db pg
-            dbset bm tpc-c
-            diset connection pg_host {{ postgres_ip }}
-            diset tpcc pg_count_ware 2
-            diset tpcc pg_num_vu 2
-            diset tpcc pg_superuserpass admin
-            buildschema
+          dbset db pg
+          dbset bm tpc-c
+          diset connection pg_host {{ postgres_ip }}
+          diset tpcc pg_count_ware 2
+          diset tpcc pg_num_vu 2
+          diset tpcc pg_superuserpass admin
+          buildschema
         dest: HammerDB-4.1/hammerdb_arguments.tcl
-
     - name: Run test commands
       shell:
         cmd: ./hammerdbcli auto hammerdb_arguments.tcl
@@ -34,25 +31,20 @@
       register: test_op
       loop_control:
         pause: 1
-      until: "30 | int - command_output.results[-1].ansible_loop_var"
+      until: 30 | int - command_output.results[-1].ansible_loop_var
       retries: 30
-
     - name: Display test_op
       debug:
         var: test_op
-
-     - name: Write destroy content 
+    - name: Write destroy content
       copy:
         content: vudestroy
         dest: HammerDB-4.1/hammerdb_arguments_destroy.tcl
-
     - name: Run destroy
       shell:
         cmd: ./hammerdbcli auto hammerdb_arguments_destroy.tcl
         chdir: HammerDB-4.1
       register: destroy_op
-
     - name: Display destroy op
       debug:
         var: destroy_op
-
