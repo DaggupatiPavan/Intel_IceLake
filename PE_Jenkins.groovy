@@ -31,7 +31,8 @@ pipeline {
         stage('Generate Inventory file') {
             steps {
                 script {
-                    sh './inventoryfile.sh'
+                    sh 'chmod +x inventoryfile.sh'
+                    sh 'bash ./inventoryfile.sh'
                 }
             }
         }
