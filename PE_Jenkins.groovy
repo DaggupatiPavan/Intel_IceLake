@@ -23,6 +23,9 @@ pipeline {
                             terraform apply tfplan -no-color
                             terraform output -json private_ips | jq -r '.[]'
                         '''
+                        def private_ips = sh(script: "terraform output -json private_ips", returnStdout: true).trim().split('\n')
+                        def postgres_ip = private_ips[0].trim()
+                        def hammer_ip = private_ips[1].trim()
                     }
                 }
             }
