@@ -25,6 +25,7 @@
         reboot_timeout: 600
         
     - name: Start DB
+      become: true
       command:
         cmd: 'su - postgres -c "pg_ctl -D $PGDATA start"'
       register: restore_start_db_status
