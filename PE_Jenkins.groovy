@@ -78,11 +78,11 @@ pipeline {
             }
         }
     }
-    // post{
-    //     always{
-    //         sh "terraform destroy --auto-approve "
-    //     }
-    // }
+    post{
+        always{
+            sh "terraform destroy --auto-approve "
+        }
+    }
 }
 
 def waitStatus(){
