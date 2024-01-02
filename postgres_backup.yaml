@@ -25,6 +25,7 @@
           ln -s /var/lib/postgresql/14/log/pg_wal /var/lib/postgresql/14/main/pg_wal
       
     - name: start db
+      become: true
       command:
         cmd: 'su - postgres -c "pg_ctl -D $PGDATA start"'
       register: start_dbs_status
