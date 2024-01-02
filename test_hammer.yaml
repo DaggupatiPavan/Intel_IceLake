@@ -32,7 +32,7 @@
       register: test_op
 
     - name: Save lines containing "system achieved" to a file
-      command: "echo '{{ test_op.stdout }}' | grep 'system achieved' >> output_file.txt"
+      command: "echo '{{ test_op.stdout }}' | grep 'system achieved' > output_file.txt"
       when: test_op.stdout is defined
       
     - name: Write destroy content 
