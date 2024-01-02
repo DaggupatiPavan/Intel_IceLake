@@ -14,8 +14,8 @@
             diset tpcc pg_count_ware 20
             diset tpcc pg_superuserpass admin
             diset tpcc pg_total_iterations 10000000
-            diset tpcc pg_rampup 5
-            diset tpcc pg_duration 15
+            diset tpcc pg_rampup 
+            diset tpcc pg_duration 1
             diset tpcc pg_driver timed
             loadscript
             vuset vu 1
@@ -31,6 +31,10 @@
         chdir: HammerDB-4.1
       register: test_op
 
+    - name: Save lines containing "system achieved" to a file
+      command: "echo '{{ test_op.stdout }}' | grep 'system achieved' >> output_file.txt"
+      when: test_op.stdout is defined
+      
     - name: Write destroy content 
       copy:
         content: vudestroy
