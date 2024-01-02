@@ -16,7 +16,6 @@
     - name: Write file contents
       copy:
         content: |
-          !/bin/tclsh
           puts "SETTING CONFIGURATION"
           global complete
           proc wait_to_complete {} {
