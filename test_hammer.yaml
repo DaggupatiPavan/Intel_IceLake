@@ -22,6 +22,7 @@
             vuset vu logtotemp 1
             vucreate
             vurun
+            waittocomplete
         dest: HammerDB-4.1/hammerdb_arguments_test.tcl
 
     - name: Run test commands
