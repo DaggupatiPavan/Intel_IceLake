@@ -35,7 +35,7 @@
         
     - name: Run test commands
       shell:
-        cmd: ./hammerdbcli auto hammerdb_arguments.tcl
+        cmd: ./hammerdbcli auto hammerdb_arguments.tcl > hammerdb_output
         chdir: HammerDB-4.1
       register: test_op
       # loop_control:
@@ -46,15 +46,26 @@
     - name: Display test_op
       debug:
         var: test_op
+
+     - name: Read file contents
+      slurp:
+        src: HammerDB-4.1/hammerdb_output
+      register: file_contents
+
+    - name: Display file contents
+      debug:
+        var: file_contents.content | b64decode
     - name: Write destroy content
       copy:
         content: vudestroy
         dest: HammerDB-4.1/hammerdb_arguments_destroy.tcl
+        
     - name: Run destroy
       shell:
         cmd: ./hammerdbcli auto hammerdb_arguments_destroy.tcl
         chdir: HammerDB-4.1
       register: destroy_op
+      
     - name: Display destroy op
       debug:
         var: destroy_op
