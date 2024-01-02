@@ -17,12 +17,6 @@
       copy:
         content: |
           puts "SETTING CONFIGURATION"
-          global complete
-          proc wait_to_complete {} {
-          global complete
-          set complete [vucomplete]
-          if {!$complete} { after 5000 wait_to_complete } else { exit }
-          }
           dbset db pg
           dbset bm tpc-c
           diset connection pg_host {{ postgres_ip }}
@@ -30,23 +24,17 @@
           diset tpcc pg_num_vu 2
           diset tpcc pg_superuserpass admin
           buildschema
-          wait_to_complete
+          waittocomplete
         dest: HammerDB-4.1/hammerdb_arguments.tcl
     - name: Run test commands
       shell:
-        cmd: ./hammerdbcli auto hammerdb_arguments.tcl > hammerdb_output
+        cmd: ./hammerdbcli auto hammerdb_arguments.tcl 
         chdir: HammerDB-4.1
       register: test_op
     - name: Display test_op
       debug:
         var: test_op
-    - name: Read file contents
-      slurp:
-        src: HammerDB-4.1/hammerdb_output
-      register: file_contents
-    - name: Display file contents
-      debug:
-        var: file_contents.content | b64decode
+    
     - name: Write destroy content
       copy:
         content: vudestroy
