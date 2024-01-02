@@ -71,10 +71,10 @@ pipeline {
                         ansible-playbook -i myinventory postgres_config.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
                         ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
                         ansible-playbook -i myinventory postgres_backup.yaml 
-                        
+                        ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
                         ansible-playbook -i myinventory restore_db.yaml 
                     """
-                    // ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
+                    
                 }
             }
         }
