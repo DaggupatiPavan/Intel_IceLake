@@ -6,7 +6,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/AbhishekRaoV/Intel_IceLake.git'
             }
         }
-        stage('Build infra') {
+        stage('Build Infra') {
             steps {
                 script {
                         sh '''
@@ -27,7 +27,7 @@ pipeline {
                 }
         }
 
-        stage('Generate Inventory file') {
+        stage('Generate Inventory File') {
             steps {
                 script {
                     sh 'chmod +x inventoryfile.sh'
@@ -38,7 +38,7 @@ pipeline {
 
         
 
-        stage('Install ansible') {
+        stage('Install Ansible') {
             steps {
                 script {
                     // sh "sudo ssh-keygen -f /var/lib/jenkins/.ssh/known_hosts -R ${postgres_ip}"
@@ -64,7 +64,7 @@ pipeline {
                 }
             }
         }
-        stage('Configure') {
+        stage('Configure & Test') {
             steps {
                 script {
                     sh """
@@ -78,7 +78,7 @@ pipeline {
             }
         }
     }
-    post{
+    post('Destroy Infra'){
         always{
             sh "terraform destroy --auto-approve "
         }
