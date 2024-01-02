@@ -19,10 +19,6 @@
           cp -R /var/lib/postgresql/14/backups/main/* /var/lib/postgresql/14/main/
           mv /var/lib/postgresql/14/main/pg_wal /var/lib/postgresql/14/log
           ln -s /var/lib/postgresql/14/log/pg_wal /var/lib/postgresql/14/main/pg_wal
-
-    - name: Reboot machine
-      reboot:
-        reboot_timeout: 600
         
     - name: Start DB
       become: true
@@ -33,3 +29,7 @@
     - name: Display status
       debug:  
         var: restore_start_db_status
+
+    - name: Reboot machine
+      reboot:
+        reboot_timeout: 600
