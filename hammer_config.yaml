@@ -24,6 +24,7 @@
           diset tpcc pg_superuserpass admin
           buildschema
         dest: HammerDB-4.1/hammerdb_arguments.tcl
+        
     - name: Run test commands
       shell:
         cmd: ./hammerdbcli auto hammerdb_arguments.tcl
@@ -31,8 +32,9 @@
       register: test_op
       loop_control:
         pause: 1
-      until: 30 | int - command_output.results[-1].ansible_loop_var
+      until: test_op.rc == 0
       retries: 30
+
     - name: Display test_op
       debug:
         var: test_op
