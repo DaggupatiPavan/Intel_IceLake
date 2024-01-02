@@ -1,61 +1,34 @@
 ---
-- name: Config HammerDB
-  hosts: hammer
+- name: Restore DB
+  hosts: postgres
   become: true
-  vars:
-    postgres_ip: "{{ postgres_ip }}"
   tasks:
-    - name: Unset LD_LIBRARY_PATH
-      shell:
-        cmd: unset LD_LIBRARY_PATH
-        chdir: HammerDB-4.1
-    - name: Export LD_LIBRARY_PATH
-      shell:
-        cmd: export LD_LIBRARY_PATH=/usr/lib/postgresql/14/lib
-        chdir: HammerDB-4.1
-    - name: Write file contents
-      copy:
-        content: |
-          puts "SETTING CONFIGURATION"
-          global complete
-          proc wait_to_complete {} {
-          global complete
-          set complete [vucomplete]
-          if {!$complete} { after 5000 wait_to_complete } else { exit }
-          }
-          dbset db pg
-          dbset bm tpc-c
-          diset connection pg_host {{ postgres_ip }}
-          diset tpcc pg_count_ware 2
-          diset tpcc pg_num_vu 2
-          diset tpcc pg_superuserpass admin
-          buildschema
-          wait_to_complete
-        dest: HammerDB-4.1/hammerdb_arguments.tcl
-    - name: Run test commands
-      shell:
-        cmd: ./hammerdbcli auto hammerdb_arguments.tcl > hammerdb_output
-        chdir: HammerDB-4.1
-      register: test_op
-    - name: Display test_op
+    - name: Stop db
+      command:
+        cmd: 'su - postgres -c "pg_ctl -D $PGDATA stop"'
+      register: restore_stop_db_status
+    
+    - name: Display status
       debug:
-        var: test_op
-    - name: Read file contents
-      slurp:
-        src: HammerDB-4.1/hammerdb_output
-      register: file_contents
-    - name: Display file contents
-      debug:
-        var: file_contents.content | b64decode
-    - name: Write destroy content
-      copy:
-        content: vudestroy
-        dest: HammerDB-4.1/hammerdb_arguments_destroy.tcl
-    - name: Run destroy
-      shell:
-        cmd: ./hammerdbcli auto hammerdb_arguments_destroy.tcl
-        chdir: HammerDB-4.1
-      register: destroy_op
-    - name: Display destroy op
-      debug:
-        var: destroy_op
+        var: restore_stop_db_status
+
+    - name: Delete, copy, move and link files
+      shell: |
+          rm -rf /var/lib/postgresql/14/main/*
+          rm -rf /var/lib/postgresql/14/log/*
+          cp -R /var/lib/postgresql/14/backups/main/* $PGDATA/
+          mv /var/lib/postgresql/14/main/pg_wal /var/lib/postgresql/14/log
+          ln -s /var/lib/postgresql/14/log/pg_wal /var/lib/postgresql/14/main/pg_wal
+
+    - name: Reboot machine
+      reboot:
+        reboot_timeout: 600
+        
+    - name: Start DB
+      command:
+        cmd: 'su - postgres -c "pg_ctl -D $PGDATA start"'
+      register: restore_start_db_status
+
+    - name: Display status
+      debug:  
+        var: restore_start_db_status
