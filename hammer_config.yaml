@@ -16,6 +16,14 @@
     - name: Write file contents
       copy:
         content: |
+          !/bin/tclsh
+          puts "SETTING CONFIGURATION"
+          global complete
+          proc wait_to_complete {} {
+          global complete
+          set complete [vucomplete]
+          if {!$complete} { after 5000 wait_to_complete } else { exit }
+          }
           dbset db pg
           dbset bm tpc-c
           diset connection pg_host {{ postgres_ip }}
@@ -23,6 +31,7 @@
           diset tpcc pg_num_vu 2
           diset tpcc pg_superuserpass admin
           buildschema
+          wait_to_complete
         dest: HammerDB-4.1/hammerdb_arguments.tcl
         
     - name: Run test commands
@@ -30,10 +39,10 @@
         cmd: ./hammerdbcli auto hammerdb_arguments.tcl
         chdir: HammerDB-4.1
       register: test_op
-      loop_control:
-        pause: 1
-      until: test_op.rc == 0
-      retries: 30
+      # loop_control:
+      #   pause: 1
+      # until: test_op.rc == 0
+      # retries: 30
 
     - name: Display test_op
       debug:
