@@ -17,7 +17,7 @@
           rm -rf /var/lib/postgresql/14/main/*
           rm -rf /var/lib/postgresql/14/log/*
           cp -R /var/lib/postgresql/14/backups/main/* /var/lib/postgresql/14/main/
-          mv /var/lib/postgresql/14/main/pg_wal /var/lib/postgresql/14/log
+          cp /var/lib/postgresql/14/main/pg_wal /var/lib/postgresql/14/log
           ln -s /var/lib/postgresql/14/log/pg_wal /var/lib/postgresql/14/main/pg_wal
         
     - name: Start DB
