@@ -8,48 +8,36 @@
     - name: Write file contents
       copy:
         content: |
-            dbset db pg
-            dbset bm tpc-c
-            diset connection pg_host {{ postgres_ip }}
-            diset tpcc pg_count_ware 20
-            diset tpcc pg_superuserpass admin
-            diset tpcc pg_total_iterations 10000000
-            diset tpcc pg_rampup 1
-            diset tpcc pg_duration 15
-            diset tpcc pg_driver timed
-            loadscript
-            vuset vu 2
-            vuset vu logtotemp 1
-            vucreate
-            vurun
-            waittocomplete
+          dbset db pg
+          dbset bm tpc-c
+          diset connection pg_host {{ postgres_ip }}
+          diset tpcc pg_count_ware 20
+          diset tpcc pg_superuserpass admin
+          diset tpcc pg_total_iterations 10000000
+          diset tpcc pg_rampup 1
+          diset tpcc pg_duration 15
+          diset tpcc pg_driver timed
+          loadscript
+          vuset vu 2
+          vuset vu logtotemp 1
+          vucreate
+          vurun
+          waittocomplete
         dest: HammerDB-4.1/hammerdb_arguments_test.tcl
-
     - name: Run test commands
       shell:
         cmd: ./hammerdbcli auto hammerdb_arguments_test.tcl | tee output_file.txt
         chdir: HammerDB-4.1
       register: test_op
-
     - name: Save lines containing "system achieved" to a file
-      command: cat output_file.txt | grep "System achieved" | awk -F 'System achieved | PostgreSQL TPM' '{print "System achieved " $2 "PostgreSQL TPM"}' | tee -a result.txt"
+      command: cat output_file.txt | grep "System achieved" | awk -F 'System achieved
+        | PostgreSQL TPM' '{{print "System achieved " $2 "PostgreSQL TPM"}}' |
+        tee -a result.txt
       when: test_op.stdout is defined
-      
-    - name: Write destroy content 
+    - name: Write destroy content
       copy:
         content: vudestroy
         dest: HammerDB-4.1/hammerdb_arguments_test_destory.tcl
-
-    # - name: Run destroy
-    #   shell:
-    #     cmd: ./hammerdbcli auto hammerdb_arguments_test_destory.tcl
-    #     chdir: HammerDB-4.1
-    #   register: destroy_op
-
-    # - name: Display destroy op
-    #   debug:
-    #     var: destroy_op
-
     - name: Display test results
       debug:
         var: test_op
