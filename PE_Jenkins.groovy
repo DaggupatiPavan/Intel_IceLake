@@ -22,7 +22,7 @@ pipeline {
                             terraform init
                             terraform validate
                             terraform plan -out=tfplan
-                            terraform apply -no-color -var instance_type=${params.InstanceType} -var volume_type=${params.VolumeType} -var volume_size=${params.VolumeSize}
+                            terraform apply -no-color -var instance_type=${params.InstanceType} -var volume_type=${params.VolumeType} -var volume_size=${params.VolumeSize} --auto-approve
                             terraform output -json private_ips | jq -r '.[]'
                         '''
                         waitStatus()
