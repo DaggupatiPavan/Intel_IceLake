@@ -1,0 +1,9 @@
+---
+- name: Install node_exporter
+  hosts: postgres, hammer
+  become: true
+  tasks:
+    name: install
+    apt:
+      name: prometheus-node-exporter
+      state: present
