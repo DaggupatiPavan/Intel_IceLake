@@ -26,14 +26,12 @@
         dest: HammerDB-4.1/hammerdb_arguments_test.tcl
     - name: Run test commands
       shell:
-        cmd: ./hammerdbcli auto hammerdb_arguments_test.tcl | tee output_file.txt
+        cmd: ./hammerdbcli auto hammerdb_arguments_test.tcl
         chdir: HammerDB-4.1
       register: test_op
-    - name: Save lines containing "system achieved" to a file
-      command: cat output_file.txt | grep "System achieved" | awk -F 'System achieved
-        | PostgreSQL TPM' '{{print "System achieved " $2 "PostgreSQL TPM"}}' |
-        tee -a result.txt
-      when: test_op.stdout is defined
+    - name: Display result
+      debug:
+        var: test_op
     - name: Write destroy content
       copy:
         content: vudestroy
