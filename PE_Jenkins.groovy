@@ -11,6 +11,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
+                cleanWs()
                 git branch: 'main', url: 'https://github.com/AbhishekRaoV/Intel_IceLake.git'
             }
         }
