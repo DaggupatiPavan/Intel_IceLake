@@ -97,7 +97,7 @@ variable "instance_count" {
 resource "aws_instance" "example_instance" {
 count = var.instance_count
   ami           = "ami-0c7217cdde317cfec" # Replace with the desired AMI ID
-  instance_type = "c6i.large"    # Adjust the instance type as needed
+  instance_type = "m7i.2xlarge"    # Adjust the instance type as needed
   subnet_id     = data.aws_subnet.existing_private_subnet.id
   key_name      = "nextgen-devops-team"
  
