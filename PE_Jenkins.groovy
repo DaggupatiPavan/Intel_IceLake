@@ -11,6 +11,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
+                sh " echo instance_type=${params.InstanceType} -var volume_type=${params.VolumeType} -var volume_size=${params.VolumeSize}"
                 cleanWs()
                 git branch: 'main', url: 'https://github.com/AbhishekRaoV/Intel_IceLake.git'
             }
