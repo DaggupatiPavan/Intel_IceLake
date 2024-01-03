@@ -137,7 +137,3 @@
     - name: Display status
       debug:
         var: output.stdout_lines
-    - name: Install node_exporter
-      apt:
-        name: prometheus-node-exporter
-        state: present
