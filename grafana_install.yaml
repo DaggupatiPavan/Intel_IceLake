@@ -9,11 +9,12 @@
           state: present
       
       - name: Run nexus image
-        shell: sudo docker run -d --name=grafana -p 3000:3000 grafana/grafana
+        shell: sudo docker run -d --name=grafana -p 3000:3000 --restart unless-stopped grafana/grafana
 
       - name: Start container
         shell: sudo docker start $(docker ps -a -q)
         register: docker_op
+        ignore_errors: yes
 
       - name: Display op
         debug:
