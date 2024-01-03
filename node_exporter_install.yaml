@@ -3,7 +3,7 @@
   hosts: postgres, hammer
   become: true
   tasks:
-    name: install
-    apt:
-      name: prometheus-node-exporter
-      state: present
+    - name: install
+      apt:
+        name: prometheus-node-exporter
+        state: present
