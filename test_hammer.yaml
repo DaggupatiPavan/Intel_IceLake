@@ -14,11 +14,11 @@
             diset tpcc pg_count_ware 20
             diset tpcc pg_superuserpass admin
             diset tpcc pg_total_iterations 10000000
-            diset tpcc pg_rampup 
-            diset tpcc pg_duration 1
+            diset tpcc pg_rampup 1
+            diset tpcc pg_duration 15
             diset tpcc pg_driver timed
             loadscript
-            vuset vu 1
+            vuset vu 2
             vuset vu logtotemp 1
             vucreate
             vurun
