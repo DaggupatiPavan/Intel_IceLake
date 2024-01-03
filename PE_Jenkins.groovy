@@ -19,12 +19,10 @@ pipeline {
         stage('Build Infra') {
             steps {
                 script {
-                        sh '''
-                            terraform init
-                            terraform validate
-                            terraform apply -no-color -var instance_type=${params.InstanceType} -var volume_type=${params.VolumeType} -var volume_size=${params.VolumeSize} --auto-approve
-                            terraform output -json private_ips | jq -r '.[]'
-                        '''
+                        sh "terraform init"
+                        sh "terraform validate"
+                        sh "terraform apply -no-color -var instance_type=${params.InstanceType} -var volume_type=${params.VolumeType} -var volume_size=${params.VolumeSize} --auto-approve"
+                        sh "terraform output -json private_ips | jq -r '.[]'"
                         waitStatus()
                         postgres_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | head -1", returnStdout: true).trim()
                         hammer_ip = sh(script: "terraform output -json private_ips | jq -r '.[]' | tail -1", returnStdout: true).trim()
