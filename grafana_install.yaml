@@ -10,3 +10,11 @@
       
       - name: Run nexus image
         shell: sudo docker run -d --name=grafana -p 3000:3000 grafana/grafana
+
+      - name: Start container
+        shell: sudo docker start $(docker ps -a -q)
+        register: docker_op
+
+      - name: Display op
+        debug:
+          var: docker_op
