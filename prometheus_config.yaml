@@ -1,10 +1,16 @@
 ---
 - name: Config Prometheus for node exporter
-  hosts: ubuntu@10.63.34.188
+  hosts: prometheus
   become: true
   vars:
     postgres_ip: "{{ postgres_ip }}"
   tasks:
+    - name: Remove contents after scrape_configs in prometheus.yml
+      replace:
+        path: /etc/prometheus/prometheus.yml
+        regexp: '(^scrape_configs:.*)\n([\s\S]*)'
+        replace: '\1\n'
+
     - name: Insert configuration to prometheus
       lineinfile:
         path: /etc/prometheus/prometheus.yml
