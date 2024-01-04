@@ -26,12 +26,39 @@
         dest: HammerDB-4.1/hammerdb_arguments_test.tcl
     - name: Run test commands
       shell:
-        cmd: ./hammerdbcli auto hammerdb_arguments_test.tcl
+        cmd: ./hammerdbcli auto hammerdb_arguments_test.tcl > output.txt
         chdir: HammerDB-4.1
-      register: test_op
-    - name: Display result
+
+    - name: Fetch output.txt from remote host to localhost
+      fetch:
+        src: "HammerDB-4.1/output.txt"
+        dest: "{{ playbook_dir }}/output.txt"
+        flat: yes
+
+    - name: Cat op
+      dedicate_to: localhost
+      shell: cat output.txt
+      register: result_op
+
+    - name: Display op
+      dedicate_to: localhost
       debug:
-        var: test_op
+        var: result_op
+
+    - name: Trim the results
+      dedicate_to: localhost
+      shell: grep "TEST RESULT : System achieved" output.txt | awk -F ': ' '{print $2}' | sed 's/",$//' >> results.txt
+
+    - name: Cat results
+      dedicate_to: localhost
+      shell: cat result.txt
+      register: final_op
+
+    - name: Display results
+      dedicate_to: localhost
+      debug:
+        var: final_op
+        
     - name: Write destroy content
       copy:
         content: vudestroy
