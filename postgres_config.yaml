@@ -6,12 +6,12 @@
     postgres_ip: "{{ postgres_ip }}"
     hammer_ip: "{{ hammer_ip }}"
   tasks:
-    - name: Stop PostgreSQL if already running
-      become: true
-      shell: |
-        sudo systemctl stop postgresql
-        ps aux | grep postgres | awk '{print $2}' | xargs kill -9
-      ignore_errors: true
+    # - name: Stop PostgreSQL if already running
+    #   become: true
+    #   shell: |
+    #     sudo systemctl stop postgresql
+    #     ps aux | grep postgres | awk '{print $2}' | xargs kill -9
+    #   ignore_errors: true
     - name: Start Postgres
       become: true
       shell: sudo systemctl start postgresql
