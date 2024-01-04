@@ -68,7 +68,7 @@
         seconds: 30
     - name: init DB
       command:
-        cmd: su - postgres -c "initdb -D $PGDATA"
+        cmd: su - postgres -c "/usr/lib/postgresql/14/bin/initdb -D $PGDATA"
       register: init_db_status
     - name: Display status
       debug:
