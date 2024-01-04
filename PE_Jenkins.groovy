@@ -92,8 +92,13 @@ pipeline {
         }
     }
     post('Destroy Infra'){
+        success{
+             archieveArtifacts '**/results.txt'
+        }
+    }
+   
+    post('Destroy Infra'){
         always{
-            archieveArtifacts '**/results.txt'
             sh "terraform destroy --auto-approve "
         }
     }
