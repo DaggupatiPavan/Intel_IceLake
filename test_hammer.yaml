@@ -52,7 +52,7 @@
       
     - name: Cat results
       dedicate_to: localhost
-      shell: cat result.txt
+      shell: cat results.txt
       register: final_op
 
     - name: Display results
