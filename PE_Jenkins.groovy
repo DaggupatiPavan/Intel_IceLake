@@ -90,11 +90,11 @@ pipeline {
             }
         }
     }
-    post('Destroy Infra'){
-        always{
-            sh "terraform destroy --auto-approve "
-        }
-    }
+    // post('Destroy Infra'){
+    //     always{
+    //         sh "terraform destroy --auto-approve "
+    //     }
+    // }
 }
 
 def waitStatus(){
