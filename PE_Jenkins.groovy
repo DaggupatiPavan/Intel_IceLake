@@ -91,7 +91,7 @@ pipeline {
             }
                 post('Artifact'){
                 success{
-                     archieveArtifacts '**/results.txt'
+                     archiveArtifacts artifacts: '**/results.txt'
                         }
                     }
         }
