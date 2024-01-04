@@ -1,4 +1,4 @@
-ami="ami-0261755bbcb8c4a84"
+ami="ami-0c7217cdde317cfec"
 volume_size=25
 volume_type="gp2"
 instance_count=2
