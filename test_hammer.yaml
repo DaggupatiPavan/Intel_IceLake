@@ -1,5 +1,5 @@
 ---
-- name: Config HammerDB
+- name: Test HammerDB
   hosts: hammer
   become: true
   vars:
