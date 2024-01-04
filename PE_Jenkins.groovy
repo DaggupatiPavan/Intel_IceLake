@@ -65,10 +65,11 @@ pipeline {
                         ansible-playbook -i myinventory postgres_install.yaml
                         ansible-playbook -i myinventory hammerdb_install.yaml
                         ansible-playbook -i myinventory node_exporter_install.yaml
-                        ansible-playbook -i myinventory prometheus_install.yaml
-                        ansible-playbook -i myinventory postgres_exporter_install.yaml -e postgres_ip=${postgres_ip}
-                        ansible-playbook -i myinventory grafana_install.yaml
+                        
                     """
+                        // ansible-playbook -i myinventory prometheus_install.yaml
+                        // ansible-playbook -i myinventory postgres_exporter_install.yaml -e postgres_ip=${postgres_ip}
+                        // ansible-playbook -i myinventory grafana_install.yaml
                 }
             }
         }
