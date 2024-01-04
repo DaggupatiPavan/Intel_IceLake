@@ -36,27 +36,27 @@
         flat: yes
 
     - name: Cat op
-      dedicate_to: localhost
+      delegate_to: localhost
       shell: cat output.txt
       register: result_op
 
     - name: Display op
-      dedicate_to: localhost
+      delegate_to: localhost
       debug:
         var: result_op
 
     - name: Trim the results
-      dedicate_to: localhost
+      delegate_to: localhost
       shell: |
         grep 'TEST RESULT : System achieved' output.txt | awk -F ': ' '{print $2}' | sed 's/"',$// >> results.txt
       
     - name: Cat results
-      dedicate_to: localhost
+      delegate_to: localhost
       shell: cat results.txt
       register: final_op
 
     - name: Display results
-      dedicate_to: localhost
+      delegate_to: localhost
       debug:
         var: final_op
         
