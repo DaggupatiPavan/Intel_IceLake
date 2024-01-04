@@ -47,8 +47,7 @@
 
     - name: Trim the results
       dedicate_to: localhost
-      shell: grep "TEST RESULT : System achieved" output.txt | awk -F ': ' '{print $2}' | sed 's/",$//' >> results.txt
-
+      shell: "grep 'TEST RESULT : System achieved' output.txt | awk -F ': ' '{print $2}' | sed 's/"',$// >> results.txt"
     - name: Cat results
       dedicate_to: localhost
       shell: cat result.txt
