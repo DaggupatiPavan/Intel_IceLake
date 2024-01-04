@@ -91,7 +91,7 @@ pipeline {
             }
         }
     }
-    post('Destroy Infra'){
+    post('Artifact'){
         success{
              archieveArtifacts '**/results.txt'
         }
