@@ -34,13 +34,13 @@ pipeline {
                 }
         }
 
-        stage('Install Ansible & Generate Inventory File') {
+        stage('Generate Inventory File') {
             steps {
                 script {
                     sh 'chmod +x inventoryfile.sh'
                     sh 'bash ./inventoryfile.sh'
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${postgres_ip} -- 'sudo apt update && sudo apt install ansible -y'"
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${hammer_ip} -- 'sudo apt update && sudo apt install ansible -y'"
+                    // sh "ssh -o StrictHostKeyChecking=no ubuntu@${postgres_ip} -- 'sudo apt update && sudo apt install ansible -y'"
+                    // sh "ssh -o StrictHostKeyChecking=no ubuntu@${hammer_ip} -- 'sudo apt update && sudo apt install ansible -y'"
                 }
             }
         }
