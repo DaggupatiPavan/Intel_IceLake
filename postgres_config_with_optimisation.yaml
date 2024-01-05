@@ -79,12 +79,12 @@
         insertafter: host    all             all             127.0.0.1/32            trust
     - name: Update max_connections in postgresql.conf
       ansible.builtin.lineinfile:
-        path: /path/to/postgresql.conf
+        path: /var/lib/postgresql/14/main/postgresql.conf
         regexp: "^max_connections = "
         line: max_connections = 256
     - name: Update shared_buffer in postgresql.conf
       ansible.builtin.lineinfile:
-        path: /path/to/postgresql.conf
+        path: /var/lib/postgresql/14/main/postgresql.conf
         regexp: "^shared_buffers = "
         line: shared_buffers = 4096MB
       notify: Reload PostgreSQL
