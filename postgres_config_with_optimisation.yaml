@@ -86,7 +86,7 @@
       ansible.builtin.lineinfile:
         path: /var/lib/postgresql/14/main/postgresql.conf
         regexp: "^shared_buffers = "
-        line: shared_buffers = 4096MB
+        line: shared_buffers = 9600MB
       notify: Reload PostgreSQL
     - name: Edit postgres.conf
       lineinfile:
