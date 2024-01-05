@@ -34,52 +34,55 @@ pipeline {
                 }
         }
 
-        stage('Generate Inventory File') {
+        stage('Install Ansible & Generate Inventory File') {
             steps {
                 script {
                     sh 'chmod +x inventoryfile.sh'
                     sh 'bash ./inventoryfile.sh'
-                }
-            }
-        }
-
-        
-
-        stage('Install Ansible') {
-            steps {
-                script {
-                    // sh "sudo ssh-keygen -f /var/lib/jenkins/.ssh/known_hosts -R ${postgres_ip}"
-                    // sh "sudo ssh-keygen -f /var/lib/jenkins/.ssh/known_hosts -R ${hammer_ip}"
-                    // sh "sudo ssh-keyscan ${postgres_ip} >> /var/lib/jenkins/.ssh/known_hosts"
-                    // sh "sudo ssh-keyscan ${hammer_ip} >> /var/lib/jenkins/.ssh/known_hosts"
                     sh "ssh -o StrictHostKeyChecking=no ubuntu@${postgres_ip} -- 'sudo apt update && sudo apt install ansible -y'"
                     sh "ssh -o StrictHostKeyChecking=no ubuntu@${hammer_ip} -- 'sudo apt update && sudo apt install ansible -y'"
                 }
             }
         }
 
-        stage('Install Tools') {
+        stage('Install & Configure') {
             steps {
                 script {
+
+                    if("${params.Optimization}" == "Optimized"){
                     sh """
                         ansible-playbook -i myinventory postgres_install.yaml
                         ansible-playbook -i myinventory hammerdb_install.yaml
                         ansible-playbook -i myinventory node_exporter_install.yaml
                         ansible-playbook -i myini prometheus_config.yaml -e postgres_ip=${postgres_ip}
+                        ansible-playbook -i myinventory postgres_config_with_optimisation.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
+                        ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
+                        ansible-playbook -i myinventory postgres_backup.yaml 
                     """
+                    }
+
+                    if("${params.Optimization}" == "Non-Optimized"){
+                    sh """
+                        ansible-playbook -i myinventory postgres_install.yaml
+                        ansible-playbook -i myinventory hammerdb_install.yaml
+                        ansible-playbook -i myinventory node_exporter_install.yaml
+                        ansible-playbook -i myini prometheus_config.yaml -e postgres_ip=${postgres_ip}
+                        ansible-playbook -i myinventory postgres_config.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
+                        ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
+                        ansible-playbook -i myinventory postgres_backup.yaml 
+                    """
+                    }
                         // ansible-playbook -i myinventory prometheus_install.yaml
                         // ansible-playbook -i myinventory postgres_exporter_install.yaml -e postgres_ip=${postgres_ip}
                         // ansible-playbook -i myinventory grafana_install.yaml
                 }
             }
         }
-        stage('Configure & Test') {
+
+        stage('Test') {
             steps {
                 script {
                     sh """
-                        ansible-playbook -i myinventory postgres_config.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
-                        ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
-                        ansible-playbook -i myinventory postgres_backup.yaml 
                         ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
                         ansible-playbook -i myinventory restore_db.yaml 
                         ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
@@ -89,11 +92,11 @@ pipeline {
                     """
                 }
             }
-                post('Artifact'){
-                success{
-                     archiveArtifacts artifacts: '**/results.txt'
-                        }
-                    }
+            post('Artifact'){
+            success{
+                    archiveArtifacts artifacts: '**/results.txt'
+                }
+            }
         }
     }
 
