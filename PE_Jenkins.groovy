@@ -40,6 +40,7 @@ pipeline {
                         sh "terraform validate"
                         def startTime = sh(script: "date -u '+%Y-%m-%dT%H:%M:%SZ'", returnStdout: true).trim()
                         env.START_TIME = startTime
+                        echo "env.START_TIME: ${env.START_TIME}"
                         sh "terraform apply -no-color -var instance_type=${params.InstanceType} -var volume_type=${params.VolumeType} -var volume_size=${params.VolumeSize} --auto-approve"
                         sh "terraform output -json private_ips | jq -r '.[]'"
                         waitStatus()
@@ -53,52 +54,52 @@ pipeline {
                 }
         }
 
-        stage('Generate Inventory File') {
-            steps {
-                script {
-                    sh 'chmod +x inventoryfile.sh'
-                    sh 'bash ./inventoryfile.sh'
-                    // sh "ssh -o StrictHostKeyChecking=no ubuntu@${postgres_ip} -- 'sudo apt update && sudo apt install ansible -y'"
-                    // sh "ssh -o StrictHostKeyChecking=no ubuntu@${hammer_ip} -- 'sudo apt update && sudo apt install ansible -y'"
-                }
-            }
-        }
+        // stage('Generate Inventory File') {
+        //     steps {
+        //         script {
+        //             sh 'chmod +x inventoryfile.sh'
+        //             sh 'bash ./inventoryfile.sh'
+        //             // sh "ssh -o StrictHostKeyChecking=no ubuntu@${postgres_ip} -- 'sudo apt update && sudo apt install ansible -y'"
+        //             // sh "ssh -o StrictHostKeyChecking=no ubuntu@${hammer_ip} -- 'sudo apt update && sudo apt install ansible -y'"
+        //         }
+        //     }
+        // }
 
-        stage('Install & Configure') {
-            steps {
-                script {
+        // stage('Install & Configure') {
+        //     steps {
+        //         script {
 
-                    if("${params.Optimization}" == "Optimized"){
-                    sh """
-                        ansible-playbook -i myinventory postgres_install.yaml
-                        ansible-playbook -i myinventory hammerdb_install.yaml
-                        ansible-playbook -i myinventory node_exporter_install.yaml
-                        ansible-playbook -i myini prometheus_config.yaml -e postgres_ip=${postgres_ip}
-                        ansible-playbook -i myinventory postgres_config_with_optimisation.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
+        //             if("${params.Optimization}" == "Optimized"){
+        //             sh """
+        //                 ansible-playbook -i myinventory postgres_install.yaml
+        //                 ansible-playbook -i myinventory hammerdb_install.yaml
+        //                 ansible-playbook -i myinventory node_exporter_install.yaml
+        //                 ansible-playbook -i myini prometheus_config.yaml -e postgres_ip=${postgres_ip}
+        //                 ansible-playbook -i myinventory postgres_config_with_optimisation.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
                          
-                    """
-                        // ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
-                        // ansible-playbook -i myinventory postgres_backup.yaml
-                    }
+        //             """
+        //                 // ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
+        //                 // ansible-playbook -i myinventory postgres_backup.yaml
+        //             }
 
-                    if("${params.Optimization}" == "Non-Optimized"){
-                    sh """
-                        ansible-playbook -i myinventory postgres_install.yaml
-                        ansible-playbook -i myinventory hammerdb_install.yaml
-                        ansible-playbook -i myinventory node_exporter_install.yaml
-                        ansible-playbook -i myini prometheus_config.yaml -e postgres_ip=${postgres_ip}
-                        ansible-playbook -i myinventory postgres_config.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
+        //             if("${params.Optimization}" == "Non-Optimized"){
+        //             sh """
+        //                 ansible-playbook -i myinventory postgres_install.yaml
+        //                 ansible-playbook -i myinventory hammerdb_install.yaml
+        //                 ansible-playbook -i myinventory node_exporter_install.yaml
+        //                 ansible-playbook -i myini prometheus_config.yaml -e postgres_ip=${postgres_ip}
+        //                 ansible-playbook -i myinventory postgres_config.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
                         
-                    """
-                        // ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
-                        // ansible-playbook -i myinventory postgres_backup.yaml 
-                    }
-                        // ansible-playbook -i myinventory prometheus_install.yaml
-                        // ansible-playbook -i myinventory postgres_exporter_install.yaml -e postgres_ip=${postgres_ip}
-                        // ansible-playbook -i myinventory grafana_install.yaml
-                }
-            }
-        }
+        //             """
+        //                 // ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
+        //                 // ansible-playbook -i myinventory postgres_backup.yaml 
+        //             }
+        //                 // ansible-playbook -i myinventory prometheus_install.yaml
+        //                 // ansible-playbook -i myinventory postgres_exporter_install.yaml -e postgres_ip=${postgres_ip}
+        //                 // ansible-playbook -i myinventory grafana_install.yaml
+        //         }
+        //     }
+        // }
 
         // stage('Test') {
         //     steps {
@@ -128,6 +129,7 @@ pipeline {
                 sh "terraform destroy --auto-approve "
                 def endTime = sh(script: "date -u '+%Y-%m-%dT%H:%M:%SZ'", returnStdout: true).trim()
                 env.END_TIME = endTime
+                echo "env.END_TIME: ${env.END_TIME}"
                 def duration = env.END_TIME.toInteger() - env.START_TIME.toInteger()
                 def hourlyRate = env["${params.INSTANCE_TYPE}"].toBigDecimal()
                 def cost = duration / 3600 * hourlyRate
