@@ -75,9 +75,10 @@ pipeline {
                         ansible-playbook -i myinventory node_exporter_install.yaml
                         ansible-playbook -i myini prometheus_config.yaml -e postgres_ip=${postgres_ip}
                         ansible-playbook -i myinventory postgres_config_with_optimisation.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
-                        ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
-                        ansible-playbook -i myinventory postgres_backup.yaml 
+                         
                     """
+                        // ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
+                        // ansible-playbook -i myinventory postgres_backup.yaml
                     }
 
                     if("${params.Optimization}" == "Non-Optimized"){
@@ -87,9 +88,10 @@ pipeline {
                         ansible-playbook -i myinventory node_exporter_install.yaml
                         ansible-playbook -i myini prometheus_config.yaml -e postgres_ip=${postgres_ip}
                         ansible-playbook -i myinventory postgres_config.yaml -e postgres_ip=${postgres_ip} -e hammer_ip=${hammer_ip}
-                        ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
-                        ansible-playbook -i myinventory postgres_backup.yaml 
+                        
                     """
+                        // ansible-playbook -i myinventory hammer_config.yaml -e postgres_ip=${postgres_ip}
+                        // ansible-playbook -i myinventory postgres_backup.yaml 
                     }
                         // ansible-playbook -i myinventory prometheus_install.yaml
                         // ansible-playbook -i myinventory postgres_exporter_install.yaml -e postgres_ip=${postgres_ip}
@@ -98,26 +100,26 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                script {
-                    sh """
-                        ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
-                        ansible-playbook -i myinventory restore_db.yaml 
+        // stage('Test') {
+        //     steps {
+        //         script {
+        //             sh """
+        //                 ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
+        //                 ansible-playbook -i myinventory restore_db.yaml 
                         
-                    """
-                    // ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
-                    //     ansible-playbook -i myinventory restore_db.yaml 
-                    //     ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
-                    //     ansible-playbook -i myinventory restore_db.yaml 
-                }
-            }
-            post('Artifact'){
-            success{
-                    archiveArtifacts artifacts: '**/results.txt'
-                }
-            }
-        }
+        //             """
+        //             // ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
+        //             //     ansible-playbook -i myinventory restore_db.yaml 
+        //             //     ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
+        //             //     ansible-playbook -i myinventory restore_db.yaml 
+        //         }
+        //     }
+        //     post('Artifact'){
+        //     success{
+        //             archiveArtifacts artifacts: '**/results.txt'
+        //         }
+        //     }
+        // }
     }
 
     post('Destroy Infra'){
