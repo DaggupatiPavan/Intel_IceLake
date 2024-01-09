@@ -122,13 +122,15 @@ pipeline {
 
     post('Destroy Infra'){
         always{
-            sh "terraform destroy --auto-approve "
-            def endTime = sh(script: "date -u -d '$END_TIME' '+%s'", returnStdout: true).trim()
-            env.END_TIME = endTime
-            def duration = env.END_TIME.toInteger() - env.START_TIME.toInteger()
-            def hourlyRate = env["${params.INSTANCE_TYPE}"].toBigDecimal()
-            def cost = duration / 3600 * hourlyRate
-            echo "Total Cost: $cost USD"
+            script{
+                sh "terraform destroy --auto-approve "
+                def endTime = sh(script: "date -u -d '$END_TIME' '+%s'", returnStdout: true).trim()
+                env.END_TIME = endTime
+                def duration = env.END_TIME.toInteger() - env.START_TIME.toInteger()
+                def hourlyRate = env["${params.INSTANCE_TYPE}"].toBigDecimal()
+                def cost = duration / 3600 * hourlyRate
+                echo "Total Cost: $cost USD"
+            }
         }
     }
 }
