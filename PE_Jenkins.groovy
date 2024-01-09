@@ -1,5 +1,22 @@
 pipeline {
     agent any
+    environment {
+        AWS_REGION = 'us-east-1'
+        INSTANCE_TYPE = 'your_instance_type'
+        START_TIME = '2024-01-09T00:00:00Z'
+        END_TIME = '2024-01-09T03:00:00Z'
+        C4_2XLARGE = '0.398'
+        M6I_XLARGE = '0.192'
+        M6I_2XLARGE = '0.384'
+        M6I_4XLARGE = '0.768'
+        M6I_8XLARGE = '1.536'
+        M6I_16XLARGE = '3.072'
+        M7I_XLARGE = '0.2016'
+        M7I_2XLARGE = '0.4032'
+        M7I_4XLARGE = '0.8064'
+        M7I_8XLARGE = '1.6128'
+        M7I_16XLARGE = '3.2256'
+    }
     parameters {
         // choice(name: 'Generation', choices: ['3rd-Gen','4th-Gen'], description: 'Intel processor generation') 
         choice(name: 'Optimization', choices: ['Optimized','Non-Optimized'], description: 'Use Intel optimized instance type or not') 
@@ -21,6 +38,8 @@ pipeline {
                 script {
                         sh "terraform init"
                         sh "terraform validate"
+                        def startTime = sh(script: "date -u -d '$START_TIME' '+%s'", returnStdout: true).trim()
+                        env.START_TIME = startTime
                         sh "terraform apply -no-color -var instance_type=${params.InstanceType} -var volume_type=${params.VolumeType} -var volume_size=${params.VolumeSize} --auto-approve"
                         sh "terraform output -json private_ips | jq -r '.[]'"
                         waitStatus()
@@ -103,6 +122,12 @@ pipeline {
     post('Destroy Infra'){
         always{
             sh "terraform destroy --auto-approve "
+            def endTime = sh(script: "date -u -d '$END_TIME' '+%s'", returnStdout: true).trim()
+            env.END_TIME = endTime
+            def duration = env.END_TIME.toInteger() - env.START_TIME.toInteger()
+            def hourlyRate = env["${params.INSTANCE_TYPE}"].toBigDecimal()
+            def cost = duration / 3600 * hourlyRate
+            echo "Total Cost: $cost USD"
         }
     }
 }
