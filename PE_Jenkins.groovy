@@ -38,7 +38,7 @@ pipeline {
                 script {
                         sh "terraform init"
                         sh "terraform validate"
-                        def startTime = sh(script: "date -u -d '$START_TIME' '+%s'", returnStdout: true).trim()
+                        def startTime = sh(script: "date -u '+%Y-%m-%dT%H:%M:%SZ'", returnStdout: true).trim()
                         env.START_TIME = startTime
                         sh "terraform apply -no-color -var instance_type=${params.InstanceType} -var volume_type=${params.VolumeType} -var volume_size=${params.VolumeSize} --auto-approve"
                         sh "terraform output -json private_ips | jq -r '.[]'"
@@ -124,7 +124,7 @@ pipeline {
         always{
             script{
                 sh "terraform destroy --auto-approve "
-                def endTime = sh(script: "date -u -d '$END_TIME' '+%s'", returnStdout: true).trim()
+                def endTime = sh(script: "date -u '+%Y-%m-%dT%H:%M:%SZ'", returnStdout: true).trim()
                 env.END_TIME = endTime
                 def duration = env.END_TIME.toInteger() - env.START_TIME.toInteger()
                 def hourlyRate = env["${params.INSTANCE_TYPE}"].toBigDecimal()
