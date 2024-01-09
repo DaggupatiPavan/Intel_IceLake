@@ -104,11 +104,12 @@ pipeline {
                     sh """
                         ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
                         ansible-playbook -i myinventory restore_db.yaml 
-                        ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
-                        ansible-playbook -i myinventory restore_db.yaml 
-                        ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
-                        ansible-playbook -i myinventory restore_db.yaml 
+                        
                     """
+                    // ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
+                    //     ansible-playbook -i myinventory restore_db.yaml 
+                    //     ansible-playbook -i myinventory test_hammer.yaml -e postgres_ip=${postgres_ip}
+                    //     ansible-playbook -i myinventory restore_db.yaml 
                 }
             }
             post('Artifact'){
