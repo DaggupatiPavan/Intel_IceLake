@@ -3,8 +3,8 @@ pipeline {
     environment {
         AWS_REGION = 'us-east-1'
         INSTANCE_TYPE = 'your_instance_type'
-        START_TIME = '2024-01-09T00:00:00Z'
-        END_TIME = '2024-01-09T03:00:00Z'
+        START_TIME = ''
+        END_TIME = ''
         C4_2XLARGE = '0.398'
         M6I_XLARGE = '0.192'
         M6I_2XLARGE = '0.384'
