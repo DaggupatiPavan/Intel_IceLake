@@ -19,4 +19,4 @@ time_difference=$((time2 - time1))
 # Format the time difference
 #formatted_time=$(date -u -d @$time_difference +"%T")
 
-echo "Time Difference: $time_difference seconds"
+echo "$time_difference"
