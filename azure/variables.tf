@@ -11,3 +11,4 @@ variable "sirp" {}
 variable "sirs" {}
 variable "sirv" {}
 variable "admin_username" {}
+variable "admin_ssh_key" {}
