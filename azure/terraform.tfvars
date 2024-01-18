@@ -1,6 +1,7 @@
 volume_type="StandardSSD_LRS"
 instance_count=2
 instance_type="Standard_B1ms"
+admin_username="ubuntu"
 subnet_id= "default"
 key_name="nextgen-devops-team"
 volume_size=25
