@@ -10,3 +10,4 @@ variable "siro" {}
 variable "sirp" {}
 variable "sirs" {}
 variable "sirv" {}
+variable "admin_username" {}
