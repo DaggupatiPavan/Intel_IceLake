@@ -11,3 +11,7 @@ siro="0001-com-ubuntu-server-jammy"
 sirp="Canonical"
 sirs="22_04-lts-gen2"
 sirv="latest"
+admin_ssh_key=[
+username =ubuntu
+public_key = file("./nextgen.pub")
+]
