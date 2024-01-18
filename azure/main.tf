@@ -11,4 +11,5 @@ module "azure-vm" {
   source_image_reference_sku          = var.sirs
   source_image_reference_version      = var.sirv
   admin_ssh_key                       = var.key
+  admin_username                      = var.admin_username
 }
